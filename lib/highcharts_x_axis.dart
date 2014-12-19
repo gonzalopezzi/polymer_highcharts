@@ -25,7 +25,7 @@ class HighchartsXAxis extends PolymerElement {
   @published String gridLineDashStyle;
   @published num gridLineWidth;
   @published num gridZIndex;
-  @published String id;
+  @published String axisId;
   @published Map labels;
   @published String color;
   @published num lineWidth;
@@ -63,7 +63,7 @@ class HighchartsXAxis extends PolymerElement {
   @published List<int> tickPositions;
   @published int tickWidth;
   @published String tickmarkPlacement;
-  @published String title;
+  @published String axisTitle;
   @published String type;
   
   @override 

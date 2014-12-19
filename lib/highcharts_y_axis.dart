@@ -72,7 +72,7 @@ class HighchartsYAxis extends HighchartsXAxis {
          ..tickPositions = tickPositions
          ..tickWidth = tickWidth
          ..tickmarkPlacement = tickmarkPlacement
-         ..title = (new hc.AxisTitle ()..text = title)
+         ..title = (new hc.AxisTitle ()..text = axisTitle)
          ..type = type
          ..maxColor = maxColor
          ..minColor = minColor

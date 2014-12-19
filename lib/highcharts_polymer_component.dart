@@ -8,7 +8,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   @published hc.HighChart chartOptions = new hc.HighChart();
   
-  @published String title;
+  @published String chartTitle;
   @published String subtitle;
   @published bool creditsEnabled;
   @published String type;

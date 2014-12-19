@@ -16,6 +16,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   @published int borderWidth;
   @published int borderRadius;
   @published String backgroundColor;
+  @published Map plotOptions;
   
   DivElement mainDiv;
   bool _domReady = false;
@@ -37,6 +38,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   void borderColorChanged (String oldValue) => _invalidateChartOptions();
   void borderWidthChanged (int oldValue) => _invalidateChartOptions();
   void borderRadiusChanged (int oldValue) => _invalidateChartOptions();
+  void plotOptionsChanged (int oldValue) => _invalidateChartOptions();
   
   bool _chartOptionsDirty = false;
   
@@ -48,7 +50,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   void _commitChartOptions () {
     if (chartOptions != null) {
       if (title != null) {
-        chartOptions.title = (new hc.Title ()..text = title);
+        chartOptions.title = (new hc.Title ()..text = chartTitle);
       } 
       if (subtitle != null) {
         chartOptions.subtitle = (new hc.Subtitle ()..text = subtitle);
@@ -70,6 +72,12 @@ class HighchartsPolymerComponent extends PolymerElement {
       }
       if (borderRadius != null) {
         chartOptions.chart.borderRadius = borderRadius;
+      }
+      if (plotOptions != null) {
+        if (chartOptions.plotOptions == null) {
+          chartOptions.plotOptions = new hc.PlotOptions();
+        }
+        chartOptions.plotOptions.moreOptions = plotOptions;
       }
       _chartOptionsDirty = false;
     }

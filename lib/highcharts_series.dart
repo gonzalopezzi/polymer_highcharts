@@ -7,7 +7,15 @@ import 'dart:html';
 class HighchartsSeries extends PolymerElement {
   
   @published List numData;
-  @published List<hc.Point> data;
+  List<hc.Point> _data;
+  
+  @published 
+  List<hc.Point> get data => _data;
+  void set data (d) {
+    _data = d;
+    _addSeries ();
+  }
+  
   @published int index;
   @published int legendIndex;
   @published String name;
@@ -16,6 +24,8 @@ class HighchartsSeries extends PolymerElement {
   @published int xAxis;
   @published int yAxis;
   @published int zIndex;
+  
+  String _uid = "highcharts-series-${new DateTime.now().toString()}";
   
   factory HighchartsSeries() => new Element.tag('highcharts-series');
   HighchartsSeries.created () : super.created ();
@@ -34,20 +44,25 @@ class HighchartsSeries extends PolymerElement {
   void attached () {
     highchartsPolymerComponent = this.parent;
     _addSeries ();
+    this.changes.listen((_) {
+      _addSeries();
+    });
   }
   
   void _addSeries () {
-    highchartsPolymerComponent.addSeries(new hc.Series()
-                                                ..numData = numData 
-                                                ..data = data
-                                                ..index = index
-                                                ..legendIndex = legendIndex
-                                                ..name = name
-                                                ..stack = stack
-                                                ..type = type
-                                                ..xAxis = xAxis
-                                                ..yAxis = yAxis
-                                                ..zIndex = zIndex);
+    if (highchartsPolymerComponent != null) {
+      highchartsPolymerComponent.addSeries(_uid, new hc.Series()
+                                                  ..numData = numData 
+                                                  ..data = data
+                                                  ..index = index
+                                                  ..legendIndex = legendIndex
+                                                  ..name = name
+                                                  ..stack = stack
+                                                  ..type = type
+                                                  ..xAxis = xAxis
+                                                  ..yAxis = yAxis
+                                                  ..zIndex = zIndex);
+    }
   }
   
 }

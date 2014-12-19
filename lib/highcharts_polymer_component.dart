@@ -21,7 +21,9 @@ class HighchartsPolymerComponent extends PolymerElement {
   bool _domReady = false;
   bool _propertiesDirty = false;
     
-  List<hc.Series> _pendingSeries = new List<hc.Series> ();
+  Map<String, hc.Series> _seriesPositionDictionary = new Map<String, hc.Series> ();  
+  
+  List<Map> _pendingSeries = new List<Map> ();
   hc.XAxis _xAxis;
   hc.YAxis _yAxis;
   
@@ -83,15 +85,19 @@ class HighchartsPolymerComponent extends PolymerElement {
     _invalidateProperties ();
   }
   
-  void addSeries (hc.Series series) {
+  void addSeries (String uid, hc.Series series) {
+    if (_seriesPositionDictionary[uid] != null) {
+      chartOptions.series.remove(_seriesPositionDictionary[uid]);
+    }
     if (chartOptions != null) {
       if (chartOptions.series == null) {
         chartOptions.series = new List<hc.Series> ();
       }
       chartOptions.series.add(series);
+      _seriesPositionDictionary [uid] = series;
     }
     else {
-      _pendingSeries.add(series);
+      _pendingSeries.add({uid:uid, series: series});
       _invalidateProperties();
     }
   }
@@ -142,8 +148,8 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   void _addPendingSeries () {
     if (_pendingSeries != null) {
-      _pendingSeries.forEach((hc.Series serie) {
-        chartOptions.series.add(serie);
+      _pendingSeries.forEach((Map map) {
+        this.addSeries(map["uid"], map["series"]);
       });
     }
   }

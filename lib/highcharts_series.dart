@@ -1,6 +1,7 @@
 import 'package:polymer/polymer.dart';
 import 'package:polymer_highcharts/highcharts_polymer_component.dart';
 import 'package:highcharts_options/chart_options.dart' as hc;
+import 'package:uuid/uuid.dart';
 import 'dart:html';
 
 @CustomTag('highcharts-series')
@@ -25,7 +26,7 @@ class HighchartsSeries extends PolymerElement {
   @published int yAxis;
   @published int zIndex;
   
-  String _uid = "highcharts-series-${new DateTime.now().toString()}";
+  String _uid = new Uuid().v1();
   
   factory HighchartsSeries() => new Element.tag('highcharts-series');
   HighchartsSeries.created () : super.created ();

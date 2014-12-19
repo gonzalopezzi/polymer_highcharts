@@ -22,19 +22,32 @@ class HighchartsSeries extends PolymerElement {
   
   HighchartsPolymerComponent highchartsPolymerComponent;
   
+  void dataChanged (List<hc.Point> oldValue) {
+    _addSeries ();
+  }
+  
+  void numDataChanged (List oldValue) {
+    _addSeries ();
+  }
+  
   @override 
   void attached () {
     highchartsPolymerComponent = this.parent;
-    highchartsPolymerComponent.addSeries(new hc.Series()
-                                            ..numData = numData 
-                                            ..data = data
-                                            ..index = index
-                                            ..legendIndex = legendIndex
-                                            ..name = name
-                                            ..stack = stack
-                                            ..type = type
-                                            ..xAxis = xAxis
-                                            ..yAxis = yAxis
-                                            ..zIndex = zIndex);
+    _addSeries ();
   }
+  
+  void _addSeries () {
+    highchartsPolymerComponent.addSeries(new hc.Series()
+                                                ..numData = numData 
+                                                ..data = data
+                                                ..index = index
+                                                ..legendIndex = legendIndex
+                                                ..name = name
+                                                ..stack = stack
+                                                ..type = type
+                                                ..xAxis = xAxis
+                                                ..yAxis = yAxis
+                                                ..zIndex = zIndex);
+  }
+  
 }

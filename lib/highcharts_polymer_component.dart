@@ -21,6 +21,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   DivElement mainDiv;
   bool _domReady = false;
   bool _propertiesDirty = false;
+  bool _chartCreated = false;
     
   Map<String, hc.Series> _seriesPositionDictionary = new Map<String, hc.Series> ();  
   
@@ -179,7 +180,10 @@ class HighchartsPolymerComponent extends PolymerElement {
     if (chartOptions.chart == null) 
       chartOptions.chart = new hc.Chart ();
     chartOptions.chart.renderTo = mainDiv;
-    context['myChart'] = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
+    if (!_chartCreated) {
+      context['myChart'] = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
+      _chartCreated = true;
+    }
   }
   
 }

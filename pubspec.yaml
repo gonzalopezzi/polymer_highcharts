@@ -2,7 +2,7 @@ name: polymer_highcharts
 author: Gonzalo Pezzi <gonzalopezzi@gmail.com>
 description: >
   Use highcharts on your Polymer Dart projects
-version: 0.1.0+4
+version: 0.1.0+5
 homepage: https://github.com/gonzalopezzi
 dev_dependencies:
   unittest: any

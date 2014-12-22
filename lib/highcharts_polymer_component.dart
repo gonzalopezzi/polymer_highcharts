@@ -180,10 +180,10 @@ class HighchartsPolymerComponent extends PolymerElement {
     if (chartOptions.chart == null) 
       chartOptions.chart = new hc.Chart ();
     chartOptions.chart.renderTo = mainDiv;
-    if (!_chartCreated) {
+    /*if (!_chartCreated) {   TODO: TRY TO FIX THIS. THE CHART GETS CREATED EVERYTIME THERE ARE CHANGES*/
       context['myChart'] = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
-      _chartCreated = true;
-    }
+      /*_chartCreated = true;
+    }*/
   }
   
 }

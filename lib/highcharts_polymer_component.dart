@@ -1,5 +1,6 @@
 import 'package:polymer/polymer.dart';
 import 'package:highcharts_options/chart_options.dart' as hc;
+import 'package:polymer_highcharts/highcharts_series.dart';
 import 'dart:html';
 import 'dart:js';
 
@@ -21,6 +22,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   DivElement mainDiv;
   bool _domReady = false;
   bool _propertiesDirty = false;
+  bool _seriesDirty = false;
   bool _chartCreated = false;
     
   Map<String, hc.Series> _seriesPositionDictionary = new Map<String, hc.Series> ();  
@@ -87,27 +89,36 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   @override 
   void attached () {
-    mainDiv = new DivElement ();
-    this.shadowRoot.children.add(mainDiv);
+    mainDiv = $['hcDiv'] as DivElement;
     _domReady = true;
     _chartOptionsDirty = true;
     _invalidateProperties ();
   }
   
-  void addSeries (String uid, hc.Series series) {
-    if (_seriesPositionDictionary[uid] != null) {
-      chartOptions.series.remove(_seriesPositionDictionary[uid]);
-    }
+  List<HighchartsSeries> _findSeriesInDOM () {
+    List<HighchartsSeries> out = new List<HighchartsSeries> ();
+    List<Element> elements = this.querySelectorAll('highcharts-series');
+    elements.forEach((Element e) {
+      out.add(e as HighchartsSeries);
+    });
+    return out;
+  }
+  
+  void notifyNewSeries () {
+    _seriesDirty = true;
+    _invalidateProperties();
+  }
+  
+  void _commitSeries () {
     if (chartOptions != null) {
       if (chartOptions.series == null) {
         chartOptions.series = new List<hc.Series> ();
       }
-      chartOptions.series.add(series);
-      _seriesPositionDictionary [uid] = series;
-    }
-    else {
-      _pendingSeries.add({uid:uid, series: series});
-      _invalidateProperties();
+      chartOptions.series.clear();
+      List<HighchartsSeries> seriesInDOM = _findSeriesInDOM ();
+      seriesInDOM.forEach((HighchartsSeries highchartsSeries) {
+        chartOptions.series.add(highchartsSeries.getSeries());
+      });
     }
   }
   
@@ -150,24 +161,16 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   void _commitProperties () {
     if (_domReady && _propertiesDirty && chartOptions != null) {
+      if (_seriesDirty) {
+        _commitSeries();
+        _seriesDirty = false;
+      }
       _createChart ();
     }
     _propertiesDirty = false;
   }
   
-  void _addPendingSeries () {
-    if (_pendingSeries != null) {
-      _pendingSeries.forEach((Map map) {
-        this.addSeries(map["uid"], map["series"]);
-      });
-    }
-  }
-  
   void _createChart () {
-    /* This is the old way. This requires JQuery. It has been replaced by the standalone-framework (https://github.com/highslide-software/highcharts.com/blob/master/js/adapters/standalone-framework.src.js)
-    context.callMethod(r'$', ["#chart-container-$_chartID"]).callMethod('highcharts', [new JsObject.jsify(_chartOptions.toMap())]);
-    */
-    _addPendingSeries ();
     if (_chartOptionsDirty)
       _commitChartOptions();
     if (_xAxis != null) {
@@ -180,10 +183,8 @@ class HighchartsPolymerComponent extends PolymerElement {
     if (chartOptions.chart == null) 
       chartOptions.chart = new hc.Chart ();
     chartOptions.chart.renderTo = mainDiv;
-    /*if (!_chartCreated) {   TODO: TRY TO FIX THIS. THE CHART GETS CREATED EVERYTIME THERE ARE CHANGES*/
-      context['myChart'] = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
-      /*_chartCreated = true;
-    }*/
+    mainDiv.children.clear();
+    context['myChart'] = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
   }
   
 }

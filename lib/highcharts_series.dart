@@ -14,7 +14,7 @@ class HighchartsSeries extends PolymerElement {
   List<hc.Point> get data => _data;
   void set data (d) {
     _data = d;
-    _addSeries ();
+    _notifyNewSeries ();
   }
   
   @published int index;
@@ -27,6 +27,7 @@ class HighchartsSeries extends PolymerElement {
   @published int zIndex;
   
   String _uid = new Uuid().v1();
+  bool _isAttached = false;
   
   factory HighchartsSeries() => new Element.tag('highcharts-series');
   HighchartsSeries.created () : super.created ();
@@ -34,36 +35,43 @@ class HighchartsSeries extends PolymerElement {
   HighchartsPolymerComponent highchartsPolymerComponent;
   
   void dataChanged (List<hc.Point> oldValue) {
-    _addSeries ();
+    if (_isAttached)
+      _notifyNewSeries ();
   }
   
   void numDataChanged (List oldValue) {
-    _addSeries ();
+    if (_isAttached)
+      _notifyNewSeries ();
   }
   
   @override 
   void attached () {
     highchartsPolymerComponent = this.parent;
-    _addSeries ();
+    _isAttached = true;
+    _notifyNewSeries ();
     this.changes.listen((_) {
-      _addSeries();
+      _notifyNewSeries();
     });
   }
   
-  void _addSeries () {
+  void _notifyNewSeries () {
     if (highchartsPolymerComponent != null) {
-      highchartsPolymerComponent.addSeries(_uid, new hc.Series()
-                                                  ..numData = numData 
-                                                  ..data = data
-                                                  ..index = index
-                                                  ..legendIndex = legendIndex
-                                                  ..name = name
-                                                  ..stack = stack
-                                                  ..type = type
-                                                  ..xAxis = xAxis
-                                                  ..yAxis = yAxis
-                                                  ..zIndex = zIndex);
+      highchartsPolymerComponent.notifyNewSeries();
     }
+  }
+  
+  hc.Series getSeries () {
+    return (new hc.Series())
+                ..numData = numData 
+                ..data = data
+                ..index = index
+                ..legendIndex = legendIndex
+                ..name = name
+                ..stack = stack
+                ..type = type
+                ..xAxis = xAxis
+                ..yAxis = yAxis
+                ..zIndex = zIndex;
   }
   
 }

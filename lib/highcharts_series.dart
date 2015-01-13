@@ -22,8 +22,11 @@ class HighchartsSeries extends PolymerElement {
   @published var stack;
   @published String type;
   @published int xAxis;
+  @published String xAxisId;
   @published int yAxis;
+  @published String yAxisId;
   @published int zIndex;
+  @published Map moreOptions;
   
   bool _isAttached = false;
   
@@ -60,6 +63,7 @@ class HighchartsSeries extends PolymerElement {
   
   hc.Series getSeries () {
     return (new hc.Series())
+                ..id = this.id
                 ..numData = numData 
                 ..data = data
                 ..index = index
@@ -68,8 +72,11 @@ class HighchartsSeries extends PolymerElement {
                 ..stack = stack
                 ..type = type
                 ..xAxis = xAxis
+                ..xAxisId = xAxisId
                 ..yAxis = yAxis
-                ..zIndex = zIndex;
+                ..yAxisId = yAxisId
+                ..zIndex = zIndex
+                ..moreOptions = moreOptions;
   }
   
 }

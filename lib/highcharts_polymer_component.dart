@@ -259,6 +259,7 @@ class HighchartsPolymerComponent extends PolymerElement {
     seriesInDOM.forEach ((HighchartsSeries hcSeries) {
       JsObject jsSeries = jsHighchart.callMethod("get", [hcSeries.id]);
       jsSeries.callMethod("setData", [hcSeries.getSeries().getJsData()]);
+      hcSeries.getSeries().setJsChart(jsHighchart);
     });
   }
   
@@ -359,6 +360,7 @@ class HighchartsPolymerComponent extends PolymerElement {
     chartOptions.chart.renderTo = mainDiv;
     mainDiv.children.clear();
     jsHighchart = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
+    chartOptions.setJsChart (jsHighchart);
     context['myChart'] = jsHighchart;
   }
   

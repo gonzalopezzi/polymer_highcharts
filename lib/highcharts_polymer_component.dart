@@ -133,7 +133,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   void _commitChartOptions () {
     if (chartOptions != null) {
-      if (title != null) {
+      if (chartTitle != null) {
         chartOptions.title = (new hc.Title ()..text = chartTitle);
       } 
       if (subtitle != null) {
@@ -304,7 +304,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   }
   
   void chartOptionsChanged (hc.HighChart oldChartOptions) {
-    _invalidateProperties ();
+    _invalidateChartOptions();
   }
   
   void _listenToChartOptionsChanges (hc.HighChart chartOptions) {
@@ -325,13 +325,13 @@ class HighchartsPolymerComponent extends PolymerElement {
       List<HighchartsSeries> seriesInDOM = _findSeriesInDOM ();
       if (_seriesDirty) {
         _updateableSeries = _updateable(seriesInDOM, _previousSeries);
-        if (_updateableSeries) {
+        /*if (_updateableSeries) {
           _updateSeries(seriesInDOM);
         }  
-        else {
+        else {*/
           _commitSeries(seriesInDOM);
           _createChart ();
-        }
+        /*}*/
         _seriesDirty = false;
       }
       

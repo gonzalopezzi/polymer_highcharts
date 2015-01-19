@@ -55,6 +55,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   @published String type;
   @published int width; 
   @published String zoomType;
+  @published bool legendEnabled;
   
   DivElement mainDiv;
   bool _domReady = false;
@@ -123,6 +124,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   void typeChanged (String oldValue) => _invalidateChartOptions();
   void widthChanged  (String oldValue) => _invalidateChartOptions();
   void zoomTypeChanged  (String oldValue) => _invalidateChartOptions();
+  void legendEnabledChanged  (String oldValue) => _invalidateChartOptions();
   
   bool _chartOptionsDirty = false;
   
@@ -141,6 +143,12 @@ class HighchartsPolymerComponent extends PolymerElement {
       } 
       if (creditsEnabled != null) {
         chartOptions.credits = (new hc.Credits()..enabled = creditsEnabled);
+      }
+      if (legendEnabled != null) {
+        if(chartOptions.legend != null)
+          chartOptions.legend.enabled = legendEnabled;
+        else
+          chartOptions.legend = (new hc.Legend()..enabled = legendEnabled);
       }
       if (chartOptions.chart == null) {
         chartOptions.chart = new hc.Chart();
@@ -325,13 +333,13 @@ class HighchartsPolymerComponent extends PolymerElement {
       List<HighchartsSeries> seriesInDOM = _findSeriesInDOM ();
       if (_seriesDirty) {
         _updateableSeries = _updateable(seriesInDOM, _previousSeries);
-        /*if (_updateableSeries) {
+        if (_updateableSeries) {
           _updateSeries(seriesInDOM);
         }  
-        else {*/
+        else {
           _commitSeries(seriesInDOM);
           _createChart ();
-        /*}*/
+        }
         _seriesDirty = false;
       }
       

@@ -16,6 +16,7 @@ class HighchartsSeries extends PolymerElement {
     _notifyNewSeries ();
   }
   
+  @published String color;
   @published int index;
   @published int legendIndex;
   @published String name;
@@ -45,6 +46,10 @@ class HighchartsSeries extends PolymerElement {
       _notifyNewSeries ();
   }
   
+  void colorChanged (String oldValue) {
+    print ("Color: $color");
+  }
+  
   @override 
   void attached () {
     highchartsPolymerComponent = this.parent;
@@ -64,6 +69,7 @@ class HighchartsSeries extends PolymerElement {
   hc.Series getSeries () {
     return (new hc.Series())
                 ..id = this.id
+                ..color = this.color
                 ..numData = numData 
                 ..data = data
                 ..index = index

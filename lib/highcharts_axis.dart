@@ -155,7 +155,7 @@ class HighchartsAxis extends PolymerElement {
     return axis;
   }
   
-  ready() {
+  attached() {
     if (parent is HighchartsAxes) {
       (parent as HighchartsAxes).notifyAxis();
     }

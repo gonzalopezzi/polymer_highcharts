@@ -4,6 +4,7 @@ import 'package:polymer/polymer.dart';
 import 'package:highcharts_options/chart_options.dart' as hc;
 import 'package:polymer_highcharts/highcharts_series.dart';
 import 'dart:html';
+import 'dart:async';
 import 'dart:js';
 
 @CustomTag('highcharts-polymer')
@@ -64,6 +65,8 @@ class HighchartsPolymerComponent extends PolymerElement {
   bool _chartCreated = false;
   
   bool _updateableSeries = false;
+  
+  bool _creatingChart = false;
     
   Map<String, HighchartsSeries> _seriesDictionary = new Map<String, HighchartsSeries> ();
   List<HighchartsSeries> _previousSeries = new List<HighchartsSeries> ();
@@ -71,6 +74,8 @@ class HighchartsPolymerComponent extends PolymerElement {
   List<Map> _pendingSeries = new List<Map> ();
   hc.XAxis _xAxis;
   hc.YAxis _yAxis;
+  
+  bool _axesDirty = false;
   
   List<hc.XAxis> _xAxes;
   List<hc.YAxis> _yAxes; 
@@ -209,7 +214,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   }
   
   @override 
-  void attached () {
+  void domReady () {
     mainDiv = $['hcDiv'] as DivElement;
     _domReady = true;
     _chartOptionsDirty = true;
@@ -279,6 +284,7 @@ class HighchartsPolymerComponent extends PolymerElement {
       _xAxis = xAxis;
       _invalidateProperties ();
     }
+    _axesDirty = true;
   }
   
   void set xAxes (List<hc.XAxis> xAxes) {
@@ -289,6 +295,7 @@ class HighchartsPolymerComponent extends PolymerElement {
       _xAxes = xAxes;
       _invalidateProperties ();
     }
+    _axesDirty = true;
   }
   
   void set yAxis (hc.YAxis yAxis) {
@@ -299,6 +306,7 @@ class HighchartsPolymerComponent extends PolymerElement {
       _yAxis = yAxis;
       _invalidateProperties ();
     }
+    _axesDirty = true;
   }
   
   void set yAxes (List<hc.YAxis> yAxes) {
@@ -309,6 +317,7 @@ class HighchartsPolymerComponent extends PolymerElement {
       _yAxes = yAxes;
       _invalidateProperties ();
     }
+    _axesDirty = true;
   }
   
   void chartOptionsChanged (hc.HighChart oldChartOptions) {
@@ -324,30 +333,49 @@ class HighchartsPolymerComponent extends PolymerElement {
   void _invalidateProperties () {
     if (!_propertiesDirty) {
       _propertiesDirty = true;
-      window.animationFrame.then((_) { _commitProperties(); });
+      window.requestAnimationFrame((_) { _commitProperties (); });
     }
   }
   
   void _commitProperties () {
     if (_domReady && _propertiesDirty && chartOptions != null) {
       List<HighchartsSeries> seriesInDOM = _findSeriesInDOM ();
-      if (_seriesDirty) {
-        _updateableSeries = _updateable(seriesInDOM, _previousSeries);
-        if (_updateableSeries) {
-          _updateSeries(seriesInDOM);
-        }  
-        else {
-          _commitSeries(seriesInDOM);
-          _createChart ();
-        }
-        _seriesDirty = false;
+      if (_axesDirty) {
+        _commitSeries (seriesInDOM);
+        _axesDirty = false;
+        _createChart();
       }
-      
+      else {
+        if (_seriesDirty) {
+          _updateableSeries = _updateable(seriesInDOM, _previousSeries);
+          if (_updateableSeries && !_creatingChart) {
+            _updateSeries(seriesInDOM);
+          }  
+          else {
+            _commitSeries(seriesInDOM);
+            _createChart ();
+          }
+          _seriesDirty = false;
+        }
+      }
     }
     _propertiesDirty = false;
   }
   
   void _createChart () {
+    if (!_creatingChart) {
+      _creatingChart = true;
+      print ("Crear Timer");
+      new Timer(new Duration(milliseconds: 100), () {
+        _doCreateChart();
+      });
+      
+    }
+  }
+  
+  void _doCreateChart () {
+    _creatingChart = false;
+    print ("doCreateChart");
     if (_chartOptionsDirty)
       _commitChartOptions();
     if (_xAxis != null) {

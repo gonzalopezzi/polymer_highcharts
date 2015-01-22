@@ -67,6 +67,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   bool _updateableSeries = false;
   
   bool _creatingChart = false;
+  bool _updatingSeries = false;
     
   Map<String, HighchartsSeries> _seriesDictionary = new Map<String, HighchartsSeries> ();
   List<HighchartsSeries> _previousSeries = new List<HighchartsSeries> ();
@@ -268,14 +269,6 @@ class HighchartsPolymerComponent extends PolymerElement {
     _previousSeries = seriesInDOM;
   }
   
-  void _updateSeries (List<HighchartsSeries> seriesInDOM) {
-    seriesInDOM.forEach ((HighchartsSeries hcSeries) {
-      JsObject jsSeries = jsHighchart.callMethod("get", [hcSeries.id]);
-      jsSeries.callMethod("setData", [hcSeries.getSeries().getJsData()]);
-      hcSeries.getSeries().setJsChart(jsHighchart);
-    });
-  }
-  
   void set xAxis (hc.XAxis xAxis) {
     if (chartOptions != null) {
       chartOptions.xAxis = xAxis;
@@ -326,7 +319,8 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   void _listenToChartOptionsChanges (hc.HighChart chartOptions) {
     chartOptions.changes.listen((records) {
-      _invalidateProperties();
+      if (!_creatingChart) 
+        _invalidateProperties();
     });
   }
   
@@ -342,8 +336,10 @@ class HighchartsPolymerComponent extends PolymerElement {
       List<HighchartsSeries> seriesInDOM = _findSeriesInDOM ();
       if (_axesDirty) {
         _commitSeries (seriesInDOM);
-        _axesDirty = false;
         _createChart();
+        _seriesDirty = false;
+        _axesDirty = false;
+        
       }
       else {
         if (_seriesDirty) {
@@ -362,19 +358,45 @@ class HighchartsPolymerComponent extends PolymerElement {
     _propertiesDirty = false;
   }
   
-  void _createChart () {
-    if (!_creatingChart) {
-      _creatingChart = true;
-      print ("Crear Timer");
-      new Timer(new Duration(milliseconds: 100), () {
-        _doCreateChart();
-      });
-      
+  void dettached () {
+    if (jsHighchart != null && jsHighchart.hasProperty('destroy'))
+      jsHighchart.callMethod('destroy', []);
+  }
+  
+  void _updateSeries (List<HighchartsSeries> seriesInDOM) {
+    if (!_updatingSeries) {
+      _updatingSeries = true;
+      window.animationFrame.then((_) => _doUpdateSeries(seriesInDOM));
     }
   }
   
+  void _doUpdateSeries (List<HighchartsSeries> seriesInDOM) {
+    print ("---- doUpdateSeries");
+    if (jsHighchart != null) { // If the js chart has already been created
+      _updatingSeries = false;
+      seriesInDOM.forEach ((HighchartsSeries hcSeries) {
+        JsObject jsSeries = jsHighchart.callMethod("get", [hcSeries.id]);
+        if (jsSeries.hasProperty('setData')) {
+          jsSeries.callMethod("setData", [hcSeries.getSeries().getJsData()]);
+        }
+        hcSeries.getSeries().setJsChart(jsHighchart);
+      });
+    }
+  }
+    
+  
+  void _createChart () {
+    if (!_creatingChart) {
+      _creatingChart = true;
+      window.animationFrame.then((_) => _doCreateChart());
+      /*new Timer(new Duration(milliseconds: 2000), () {
+        _doCreateChart();
+      });*/
+    }
+  }
+  
+  
   void _doCreateChart () {
-    _creatingChart = false;
     print ("doCreateChart");
     if (_chartOptionsDirty)
       _commitChartOptions();
@@ -390,14 +412,21 @@ class HighchartsPolymerComponent extends PolymerElement {
     if (_yAxes != null && _yAxes.length > 0) {
       chartOptions.yAxes = _yAxes;
     }
+    
+    if (jsHighchart != null && jsHighchart.hasProperty('destroy')) {
+      jsHighchart.callMethod('destroy', []);
+    }
+    
     _listenToChartOptionsChanges (chartOptions);
+    _creatingChart = false;
+    
     if (chartOptions.chart == null) 
       chartOptions.chart = new hc.Chart ();
-    chartOptions.chart.renderTo = mainDiv;
+    chartOptions.chart.renderTo = mainDiv ;
     mainDiv.children.clear();
     jsHighchart = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
     chartOptions.setJsChart (jsHighchart);
-    context['myChart'] = jsHighchart;
+    context['chart_${this.id}'] = jsHighchart;
   }
   
 }

@@ -11,6 +11,14 @@ dependencies:
   polymer_highcharts: any
 ```
 
+Add this lines to the main html of your application (index.html) in the head section.
+```
+<script src="../../packages/polymer_highcharts/js/standalone-framework.js"></script>
+<script src="../../packages/polymer_highcharts/js/highcharts.js"></script>
+<script src="../../packages/polymer_highcharts/js/highcharts-more.js"></script>
+<script src="../../packages/polymer_highcharts/js/highcharts.src.SHADOWDOMFIX.js"></script>
+```
+
 Then, add the imports to your html file 
 ```
 <link rel="import" href="../../packages/polymer/polymer.html">

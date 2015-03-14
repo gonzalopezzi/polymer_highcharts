@@ -49,7 +49,7 @@ And just use the components:
 
 Samples
 ----------
-You can find full code samples in the [Polymer Highcharts Samples Site](highcharts-samples.gonzalopezzi.com)
+You can find full code samples in the [Polymer Highcharts Samples Site](http://highcharts-samples.gonzalopezzi.com)
 Or you can also take a look at the [github site of the samples](https://github.com/gonzalopezzi/polymer_highcharts_samples), just in case you want to clone it and see it running live. 
 
 Disclaimer

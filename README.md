@@ -11,6 +11,14 @@ dependencies:
   polymer_highcharts: any
 ```
 
+Add this lines to the main html of your application (index.html) in the head section.
+```
+<script src="../../packages/polymer_highcharts/js/standalone-framework.js"></script>
+<script src="../../packages/polymer_highcharts/js/highcharts.js"></script>
+<script src="../../packages/polymer_highcharts/js/highcharts-more.js"></script>
+<script src="../../packages/polymer_highcharts/js/highcharts.src.SHADOWDOMFIX.js"></script>
+```
+
 Then, add the imports to your html file 
 ```
 <link rel="import" href="../../packages/polymer/polymer.html">
@@ -41,7 +49,7 @@ And just use the components:
 
 Samples
 ----------
-You can find full code samples in the [Polymer Highcharts Samples Site](highcharts-samples.gonzalopezzi.com)
+You can find full code samples in the [Polymer Highcharts Samples Site](http://highcharts-samples.gonzalopezzi.com)
 Or you can also take a look at the [github site of the samples](https://github.com/gonzalopezzi/polymer_highcharts_samples), just in case you want to clone it and see it running live. 
 
 Disclaimer

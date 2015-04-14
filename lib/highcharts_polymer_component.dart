@@ -4,7 +4,6 @@ import 'package:polymer/polymer.dart';
 import 'package:highcharts_options/chart_options.dart' as hc;
 import 'package:polymer_highcharts/highcharts_series.dart';
 import 'dart:html';
-import 'dart:async';
 import 'dart:js';
 
 @CustomTag('highcharts-polymer')
@@ -134,6 +133,17 @@ class HighchartsPolymerComponent extends PolymerElement {
   
   bool _chartOptionsDirty = false;
   
+  @override
+  void attached () {
+    super.attached ();
+    window.onResize.listen((_) {
+      print ("Resize");
+      _axesDirty = true;
+      _invalidateChartOptions();
+      // TODO: Intentar hacer esto de forma más inteligente
+    });
+  }
+  
   void _invalidateChartOptions () {
     _chartOptionsDirty = true;
     _invalidateProperties();
@@ -202,7 +212,6 @@ class HighchartsPolymerComponent extends PolymerElement {
       if (chartOptions.chart.zoomType  == null) chartOptions.chart.zoomType = zoomType;
       
       
-      
       if (plotOptions != null) {
         if (chartOptions.plotOptions == null) {
           chartOptions.plotOptions = new hc.PlotOptions();
@@ -236,6 +245,37 @@ class HighchartsPolymerComponent extends PolymerElement {
     _invalidateProperties();
   }
   
+  bool _compatibleSeries (HighchartsSeries current, HighchartsSeries previous) {
+    bool compatible = true;
+    if (current.data != null) {
+      compatible = compatible && 
+                      previous.data != null && 
+                      current.data.length == previous.data.length;
+      if (compatible) {
+        int i = 0;
+        while ((compatible) && (i < current.data.length)) {
+          compatible = compatible && current.data[i].x == previous.data[i].x
+                                  && current.data[i].name == previous.data[i].name;
+          i++;
+        }
+      }
+    }
+    if (current.numData != null) {
+      compatible = compatible && 
+                      previous.numData != null && 
+                      current.numData.length == previous.numData.length;
+      if (compatible) {
+        int i = 0;
+        while ((compatible) && (i < current.numData.length)) {
+          compatible = compatible && current.numData[i].x == previous.numData[i].x
+                                  && current.data[i].name == previous.data[i].name;
+          i++;
+        }
+      }
+    }
+    return compatible;
+  }
+  
   bool _updateable (List<HighchartsSeries> seriesInDOM, List<HighchartsSeries> prevSeries) {
     bool updateable = true;
     if (_previousSeries != null && seriesInDOM != null && 
@@ -246,7 +286,9 @@ class HighchartsPolymerComponent extends PolymerElement {
           previousIndexed[series.id] = series;  
       });  
       seriesInDOM.forEach((HighchartsSeries hcSeries) {
-        updateable = updateable && previousIndexed[hcSeries.id] != null;
+        updateable = updateable && 
+                      previousIndexed[hcSeries.id] != null && 
+                      _compatibleSeries (hcSeries, previousIndexed[hcSeries.id]);
       });
     }
     else {

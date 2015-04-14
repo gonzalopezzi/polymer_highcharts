@@ -41,9 +41,9 @@ class HighchartsAxes extends PolymerElement {
   
   List<HighchartsAxis> _findAxes () {
     List<HighchartsAxis> found = new List<HighchartsAxis> ();
-    found.addAll(this.querySelectorAll("highcharts-axis"));
-    found.addAll(this.querySelectorAll("highcharts-x-axis"));
-    found.addAll(this.querySelectorAll("highcharts-y-axis"));
+    found.addAll(this.querySelectorAll("highcharts-axis") as List<HighchartsAxis>);
+    found.addAll(this.querySelectorAll("highcharts-x-axis") as List<HighchartsAxis>);
+    found.addAll(this.querySelectorAll("highcharts-y-axis") as List<HighchartsAxis>);
     return found;
   }
   

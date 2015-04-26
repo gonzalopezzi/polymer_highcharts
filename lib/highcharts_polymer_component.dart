@@ -5,6 +5,8 @@ import 'package:highcharts_options/chart_options.dart' as hc;
 import 'package:polymer_highcharts/highcharts_series.dart';
 import 'dart:html';
 import 'dart:js';
+import 'dart:async';
+import 'package:browser_detect/browser_detect.dart';
 
 @CustomTag('highcharts-polymer')
 class HighchartsPolymerComponent extends PolymerElement {
@@ -142,6 +144,19 @@ class HighchartsPolymerComponent extends PolymerElement {
       _invalidateChartOptions();
       // TODO: Intentar hacer esto de forma más inteligente
     });
+    _ie10DirtyFix();
+  }
+  
+  void _ie10DirtyFix() {
+    if (browser.isIe) {
+      print ("DANGER! Internet Explorer! ${browser.version.value}");
+      if (double.parse(browser.version.value).floor() == 10) {
+        new Timer(new Duration (milliseconds:500), () {
+          _axesDirty = true;
+          _invalidateChartOptions();
+        }); 
+      }
+    }
   }
   
   void _invalidateChartOptions () {

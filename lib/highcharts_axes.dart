@@ -55,13 +55,13 @@ class HighchartsAxes extends PolymerElement {
     equalX = (xAxes == null && _commitedXAxes == null) || (xAxes != null && _commitedXAxes != null);
     
     if (_commitedYAxes != null) {
-      equalY = equalY || yAxes.length == _commitedYAxes.length;
+      equalY = equalY && yAxes.length == _commitedYAxes.length;
       yAxes.forEach((hc.YAxis axis) {
         equalY = equalY && _containsAxis (_commitedYAxes, axis);
       });
     }
     if (equalY && _commitedXAxes != null) {
-      equalX = equalX || xAxes.length == _commitedXAxes.length;
+      equalX = equalX && xAxes.length == _commitedXAxes.length;
       xAxes.forEach ((hc.XAxis axis) {
         equalX = equalX && _containsAxis (_commitedXAxes, axis); 
       });

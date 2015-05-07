@@ -5,7 +5,7 @@ description: Use highcharts on your Polymer Dart projects
 homepage: https://github.com/gonzalopezzi
 dependencies:
   browser: '>=0.10.0+2 <0.11.0'
-  browser_detect: any
+  browser_detect: '>=1.0.3 <2.0.0'
   highcharts_options: '>=0.2.1+2 < 0.3.0'
   polymer: '>=0.15.0 <0.16.0'
 dev_dependencies:

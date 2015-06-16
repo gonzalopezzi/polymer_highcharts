@@ -11,6 +11,8 @@ import 'package:browser_detect/browser_detect.dart';
 @CustomTag('highcharts-polymer')
 class HighchartsPolymerComponent extends PolymerElement {
   
+  static bool DEBUG = false;
+  
   @published hc.HighChart chartOptions = new hc.HighChart();
   
   @published String chartTitle;
@@ -452,7 +454,6 @@ class HighchartsPolymerComponent extends PolymerElement {
     }
   }
   
-  
   void _doCreateChart () {
     print ("doCreateChart");
     if (_chartOptionsDirty)
@@ -481,9 +482,17 @@ class HighchartsPolymerComponent extends PolymerElement {
       chartOptions.chart = new hc.Chart ();
     chartOptions.chart.renderTo = mainDiv ;
     mainDiv.children.clear();
+
+    if (DEBUG)
+      _printDebug (chartOptions);
+    
     jsHighchart = new JsObject(context['Highcharts']['Chart'], [chartOptions.toJsObject()]);
     chartOptions.setJsChart (jsHighchart);
     context['chart_${this.id}'] = jsHighchart;
+  }
+  
+  void _printDebug (hc.HighChart chartOptions) {
+    (context['console'] as JsObject).callMethod('log', [chartOptions.toJsObject()]);
   }
   
 }

@@ -294,7 +294,7 @@ class HighchartsPolymerComponent extends PolymerElement {
   }
   
   bool _updateable (List<HighchartsSeries> seriesInDOM, List<HighchartsSeries> prevSeries) {
-    bool updateable = true;
+    /*bool updateable = true;
     if (_previousSeries != null && seriesInDOM != null && 
         seriesInDOM.length == prevSeries.length) {
       Map<String, HighchartsSeries> previousIndexed = new Map<String, HighchartsSeries> ();
@@ -311,7 +311,8 @@ class HighchartsPolymerComponent extends PolymerElement {
     else {
       updateable = false;
     }
-    return updateable;
+    return updateable;*/
+    return false;
   }
   
   void _commitSeries (List<HighchartsSeries> seriesInDOM) {

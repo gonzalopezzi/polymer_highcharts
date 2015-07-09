@@ -21,6 +21,7 @@ class HighchartsSeries extends PolymerElement {
   @published int legendIndex;
   @published String name;
   @published var stack;
+  @published String stacking;
   @published String type;
   @published int xAxis;
   @published String xAxisId;
@@ -82,7 +83,8 @@ class HighchartsSeries extends PolymerElement {
                 ..yAxis = yAxis
                 ..yAxisId = yAxisId
                 ..zIndex = zIndex
-                ..moreOptions = moreOptions;
+                ..moreOptions = moreOptions
+                ..moreOptions['stacking'] = stacking;
   }
   
 }

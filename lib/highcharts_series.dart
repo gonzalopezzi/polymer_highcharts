@@ -68,7 +68,7 @@ class HighchartsSeries extends PolymerElement {
   }
   
   hc.Series getSeries () {
-    return (new hc.Series())
+    hc.Series series = new hc.Series()
                 ..id = this.id
                 ..color = this.color
                 ..numData = numData 
@@ -83,8 +83,12 @@ class HighchartsSeries extends PolymerElement {
                 ..yAxis = yAxis
                 ..yAxisId = yAxisId
                 ..zIndex = zIndex
-                ..moreOptions = moreOptions
-                ..moreOptions['stacking'] = stacking;
+                ..moreOptions = moreOptions;
+    if (series.moreOptions == null) {
+      series.moreOptions = new Map ();
+    }
+    series.moreOptions['stacking'] = stacking;
+    return series;
   }
   
 }
